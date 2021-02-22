@@ -1,0 +1,61 @@
+<div class="content">
+    <div>
+        Instruments: <button mat-icon-button (click)="addInstrument()">
+            <mat-icon>add</mat-icon>
+        </button>
+    </div>
+    <div class="vertical-list">
+        <mat-card *ngFor="let instrument of getInstruments()">
+            <h2 mat-card-title>ID {{ instrument.id }}</h2>
+            <div mat-card-content>
+                <mat-form-field>
+                    <mat-label>Instrument Name</mat-label>
+                    <input matInput [(ngModel)]="instrument.name">
+                </mat-form-field>
+                <ng-container *ngIf="expanded.value">
+                    <mat-form-field>
+                        <mat-label>Model Position X</mat-label>
+                        <input matInput type="number" [(ngModel)]="instrument.position[0]">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Model Position Y</mat-label>
+                        <input matInput type="number" [(ngModel)]="instrument.position[1]">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Model Position Z</mat-label>
+                        <input matInput type="number" [(ngModel)]="instrument.position[2]">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Model Rotation X</mat-label>
+                        <input matInput type="number" [(ngModel)]="instrument.rotation[0]">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Model Rotation Y</mat-label>
+                        <input matInput type="number" [(ngModel)]="instrument.rotation[1]">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Model Rotation Z</mat-label>
+                        <input matInput type="number" [(ngModel)]="instrument.rotation[2]">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Model Scale</mat-label>
+                        <input matInput type="number" [(ngModel)]="instrument.scale">
+                    </mat-form-field>
+                    <shared-animations [animations]="instrument.animations" [assets]="getCurrentNode().assets" [parts]="getCurrentNode().parts" [customVariables]="getCurrentNode().rendering.customVariables"></shared-animations>
+                </ng-container>
+                <div class="button-group">
+                    <mat-checkbox hidden #expanded></mat-checkbox>
+                    <button mat-icon-button (click)="expanded.value = !expanded.value">
+                        <mat-icon>{{ expanded.value ? "expand_less" : "expand_more" }}</mat-icon>
+                    </button>
+                    <button mat-icon-button (click)="positionInstrumentInHUD(instrument)">
+                        <mat-icon>border_outer</mat-icon>
+                    </button>
+                    <button mat-icon-button (click)="removeInstrument(instrument)">
+                        <mat-icon>remove</mat-icon>
+                    </button>
+                </div>
+            </div>
+        </mat-card>
+    </div>
+</div>

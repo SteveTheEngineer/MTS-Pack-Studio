@@ -1,0 +1,314 @@
+Animations: <button mat-icon-button (click)="addAnimation()">
+    <mat-icon>add</mat-icon>
+</button>
+<div class="vertical-list">
+    <mat-card *ngFor="let animation of animations">
+        <div mat-card-content>
+            <mat-form-field>
+                <mat-label>Animation Name</mat-label>
+                <input matInput [(ngModel)]="animation.name">
+            </mat-form-field>
+            <ng-container *ngIf="expanded.value">
+                <mat-form-field>
+                    <mat-label>Animation Type</mat-label>
+                    <mat-select [(ngModel)]="animation.animationType">
+                        <mat-option value="rotation">Rotation</mat-option>
+                        <mat-option value="translation">Translation</mat-option>
+                        <mat-option value="visibility">Visibility</mat-option>
+                        <mat-option value="inhibitor">Inhibitor</mat-option>
+                        <mat-option value="activator">Activator</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field>
+                    <mat-label>Variable Target</mat-label>
+                    <mat-select [(ngModel)]="animation.target">
+                        <mat-option value="">[none]</mat-option>
+                        <mat-option value="vehicle">Vehicle</mat-option>
+                        <mat-option value="part" *ngIf="parts !== undefined">Part</mat-option>
+                        <mat-option value="door">Door</mat-option>
+                        <mat-option value="missile">Missile</mat-option>
+                        <mat-option value="customVariable">Custom Variable</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <ng-container *ngIf="animation.target !== ''">
+                    <ng-container [ngSwitch]="animation.target">
+                        <ng-container *ngSwitchCase="'vehicle'">
+                            <mat-form-field>
+                                <mat-label>Variable</mat-label>
+                                <mat-select [(ngModel)]="animation.variable">
+                                    <mat-optgroup label="General">
+                                        <mat-option value="rudder">Rudder</mat-option>
+                                        <mat-option value="altitude">Altitude</mat-option>
+                                        <mat-option value="brake">Brake</mat-option>
+                                        <mat-option value="p_brake">Parking Brake</mat-option>
+                                        <mat-option value="door">Door</mat-option>
+                                        <mat-option value="fuel">Fuel</mat-option>
+                                        <mat-option value="fueling">Fueling</mat-option>
+                                        <mat-option value="hookup">Hookup</mat-option>
+                                        <mat-option value="horn">Horn</mat-option>
+                                        <mat-option value="siren">Siren</mat-option>
+                                        <mat-option value="locked">Locked</mat-option>
+                                        <mat-option value="reverser">Reverser</mat-option>
+                                        <mat-option value="speed">Speed</mat-option>
+                                        <mat-option value="throttle">Throttle</mat-option>
+                                        <mat-option value="heading">Heading</mat-option>
+                                        <mat-option value="yaw">Yaw</mat-option>
+                                        <mat-option value="pitch">Pitch</mat-option>
+                                        <mat-option value="roll">Roll</mat-option>
+                                        <mat-option value="hookup_yaw">Hookup Yaw</mat-option>
+                                        <mat-option value="hookup_pitch">Hookup Pitch</mat-option>
+                                        <mat-option value="hookup_roll">Hookup Roll</mat-option>
+                                        <mat-option value="electric_power">Electric Power</mat-option>
+                                        <mat-option value="electric_usage">Electric Usage</mat-option>
+                                        <mat-option value="turn_coordinator">Turn Coordinator</mat-option>
+                                        <mat-option value="turn_indicator">Turn Indicator</mat-option>
+                                        <mat-option value="vertical_speed">Vertical Speed</mat-option>
+                                    </mat-optgroup>
+                                    <mat-optgroup label="Trailer">
+                                        <mat-option value="trailer">Trailer</mat-option>
+                                        <mat-option value="trailer_yaw">Trailer Yaw</mat-option>
+                                        <mat-option value="trailer_pitch">Trailer Pitch</mat-option>
+                                        <mat-option value="trailer_roll">Trailer Roll</mat-option>
+                                    </mat-optgroup>
+                                    <mat-optgroup label="Aircraft">
+                                        <mat-option value="slip">Slip</mat-option>
+                                        <mat-option value="flaps_actual">Flaps Actual</mat-option>
+                                        <mat-option value="flaps_setpoint">Flaps Set Point</mat-option>
+                                        <mat-option value="gear_actual">Gear Actual</mat-option>
+                                        <mat-option value="gear_setpoint">Gear Set Point</mat-option>
+                                        <mat-option value="lift_reserve">Lift Reserve</mat-option>
+                                        <mat-option value="aileron">Aileron</mat-option>
+                                        <mat-option value="elevator">Elevator</mat-option>
+                                        <mat-option value="aileron_trim">Aileron Trim</mat-option>
+                                        <mat-option value="elevator_trim">Elevator Trim</mat-option>
+                                        <mat-option value="rudder_trim">Rudder Trim</mat-option>
+                                    </mat-optgroup>
+                                    <mat-optgroup label="Beacon">
+                                        <mat-option value="beacon_bearing_setpoint">Beacon Bearing Set Point</mat-option>
+                                        <mat-option value="beacon_bearing_delta">Beacon Bearing Delta</mat-option>
+                                        <mat-option value="beacon_direction">Beacon Direction</mat-option>
+                                        <mat-option value="beacon_direction">Beacon Direction</mat-option>
+                                        <mat-option value="beacon_glideslope_setpoint">Beacon Glideslope Set Point</mat-option>
+                                        <mat-option value="beacon_glideslope_actual">Beacon Glideslope Actual</mat-option>
+                                        <mat-option value="beacon_glideslope_delta">Beacon Glideslope Delta</mat-option>
+                                    </mat-optgroup>
+                                    <mat-optgroup label="Other">
+                                        <mat-option value="time">Time</mat-option>
+                                        <mat-option value="rain">Rain</mat-option>
+                                    </mat-optgroup>
+                                </mat-select>
+                            </mat-form-field>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'part'">
+                            <mat-form-field>
+                                <mat-label>Part</mat-label>
+                                <mat-select [(ngModel)]="animation.targetId">
+                                    <mat-option [value]="-1">[none]</mat-option>
+                                    <mat-option *ngFor="let part of parts" [value]="part.id" [matTooltip]="'ID ' + part.id">{{ part.name }}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <mat-form-field *ngIf="acceptsType(animation.targetId, 'gun')">
+                                <mat-label>Gun Muzzle Position</mat-label>
+                                <input matInput type="number" [(ngModel)]="animation.targetId2">
+                            </mat-form-field>
+                            <mat-form-field>
+                                <mat-label>Variable</mat-label>
+                                <mat-select [(ngModel)]="animation.variable">
+                                    <mat-optgroup label="Engine" *ngIf="acceptsType(animation.targetId, 'engine')">
+                                        <mat-option value="engine_present">Engine Present</mat-option>
+                                        <mat-option value="engine_rotation">Engine Rotation</mat-option>
+                                        <mat-option value="engine_driveshaft_rotation">Engine Driveshaft Rotation</mat-option>
+                                        <mat-option value="engine_driveshaft_sin">Engine Driveshaft Sin</mat-option>
+                                        <mat-option value="engine_driveshaft_cos">Engine Driveshaft Cos</mat-option>
+                                        <mat-option value="engine_rpm">Engine RPM</mat-option>
+                                        <mat-option value="engine_rpm_max">Engine Max RPM</mat-option>
+                                        <mat-option value="engine_rpm_safe">Engine Safe RPM</mat-option>
+                                        <mat-option value="engine_rpm_percent">Engine RPM Percent</mat-option>
+                                        <mat-option value="engine_rpm_percent_safe">Engine RPM Safe Percent</mat-option>
+                                        <mat-option value="engine_fuel_flow">Engine Fuel Flow</mat-option>
+                                        <mat-option value="engine_temp">Engine Temperature</mat-option>
+                                        <mat-option value="engine_pressure">Engine Pressure</mat-option>
+                                        <mat-option value="engine_gear">Engine Gear</mat-option>
+                                        <mat-option value="engine_gearshift">Engine Gearshift</mat-option>
+                                        <mat-option value="engine_gearshift_hvertical">Engine Gearshift H-Pattern Vertical</mat-option>
+                                        <mat-option value="engine_gearshift_hhorizontal">Engine Gearshift H-Pattern Horizontal</mat-option>
+                                        <mat-option value="engine_magneto">Engine Magneto</mat-option>
+                                        <mat-option value="engine_starter">Engine Starter</mat-option>
+                                        <mat-option value="engine_jumper_cable">Engine Jumper Cable</mat-option>
+                                        <mat-option value="engine_hours">Engine Hours</mat-option>
+                                    </mat-optgroup>
+                                    <mat-optgroup label="Gun" *ngIf="acceptsType(animation.targetId, 'gun')">
+                                        <mat-option value="gun_active">Gun Active</mat-option>
+                                        <mat-option value="gun_firing">Gun Firing</mat-option>
+                                        <mat-option value="gun_pitch">Gun Pitch</mat-option>
+                                        <mat-option value="gun_yaw">Gun Yaw</mat-option>
+                                        <mat-option value="gun_cooldown">Gun Cooldown</mat-option>
+                                        <mat-option value="gun_windup_time">Gun Windup Time</mat-option>
+                                        <mat-option value="gun_windup_rotation">Gun Windup Rotation</mat-option>
+                                        <mat-option value="gun_windup_complete">Gun Windup Complete</mat-option>
+                                        <mat-option value="gun_muzzle_#_firing">Gun Muzzle Firing</mat-option>
+                                        <mat-option value="gun_reload">Gun Reload</mat-option>
+                                        <mat-option value="gun_ammo_count">Gun Ammo Count</mat-option>
+                                        <mat-option value="gun_ammo_percent">Gun Ammo Percent</mat-option>
+                                    </mat-optgroup>
+                                    <mat-optgroup label="Interactable" *ngIf="acceptsType(animation.targetId, 'interactable')">
+                                        <mat-option value="interactable_count">Interactable Count</mat-option>
+                                        <mat-option value="interactable_percent">Interactable Percent</mat-option>
+                                        <mat-option value="interactable_capacity">Interactable Capacity</mat-option>
+                                    </mat-optgroup>
+                                    <mat-optgroup label="Propeller" *ngIf="acceptsType(animation.targetId, 'propeller')">
+                                        <mat-option value="propeller_pitch_deg">Propeller Pitch (deg)</mat-option>
+                                        <mat-option value="propeller_pitch_in">Propeller Pitch (in)</mat-option>
+                                        <mat-option value="propeller_pitch_percent">Propeller Pitch Percent</mat-option>
+                                    </mat-optgroup>
+                                    <mat-optgroup label="Ground" *ngIf="acceptsType(animation.targetId, 'ground')">
+                                        <mat-option value="ground_rotation">Ground Rotation</mat-option>
+                                        <mat-option value="ground_onground">Ground On Ground</mat-option>
+                                        <mat-option value="ground_inliquid">Ground In Liquid</mat-option>
+                                        <mat-option value="ground_isflat">Ground Is Flat</mat-option>
+                                    </mat-optgroup>
+                                    <mat-optgroup label="Seat" *ngIf="acceptsType(animation.targetId, 'seat')">
+                                        <mat-option value="seat_occupied">Seat Occupied</mat-option>
+                                        <mat-option value="seat_rider_yaw">Seat Rider Yaw</mat-option>
+                                        <mat-option value="seat_rider_pitch">Seat Rider Pitch</mat-option>
+                                    </mat-optgroup>
+                                </mat-select>
+                            </mat-form-field>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'door'">
+                            <mat-form-field>
+                                <mat-label>Door</mat-label>
+                                <mat-select [(ngModel)]="animation.targetId">
+                                    <mat-option value="">[none]</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'missile'">
+                            <mat-form-field>
+                                <mat-label>Missile Proximity Index</mat-label>
+                                <input matInput type="number" min="0" [(ngModel)]="animation.targetId">
+                            </mat-form-field>
+                            <mat-form-field>
+                                <mat-label>Variable</mat-label>
+                                <mat-select [(ngModel)]="animation.variable">
+                                    <mat-option value="missile_incoming">Missile Incoming</mat-option>
+                                    <mat-option value="missile_#_direction">Missile Direction</mat-option>
+                                    <mat-option value="missile_#_distance">Missile Distance</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'customVariable'">
+                            <mat-form-field>
+                                <mat-label>Custom Variable</mat-label>
+                                <mat-select [(ngModel)]="animation.targetId">
+                                    <mat-option [value]="-1">[none]</mat-option>
+                                    <mat-option *ngFor="let customVariable of customVariables" [value]="customVariable">{{ customVariable }}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </ng-container>
+                    </ng-container>
+                </ng-container>
+                <mat-checkbox [(ngModel)]="animation.addPriorOffset">Add Prior Offset</mat-checkbox>
+                <mat-checkbox [(ngModel)]="animation.absolute">Absolute</mat-checkbox>
+                <mat-checkbox [(ngModel)]="animation.useClampMin">Use Clamp Min</mat-checkbox>
+                <mat-form-field *ngIf="animation.useClampMin">
+                    <mat-label>Clamp Min</mat-label>
+                    <input matInput type="number" [(ngModel)]="animation.clamp[0]">
+                </mat-form-field>
+                <mat-checkbox [(ngModel)]="animation.useClampMax">Use Clamp Max</mat-checkbox>
+                <mat-form-field *ngIf="animation.useClampMax">
+                    <mat-label>Clamp Max</mat-label>
+                    <input matInput type="number" [(ngModel)]="animation.clamp[1]">
+                </mat-form-field>
+                <ng-container *ngIf="!['inhibitor', 'activator'].includes(animation.animationType)">
+                    <mat-form-field>
+                        <mat-label>Center Point X</mat-label>
+                        <input matInput type="number" [(ngModel)]="animation.centerPoint[0]">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Center Point Y</mat-label>
+                        <input matInput type="number" [(ngModel)]="animation.centerPoint[1]">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Center Point Z</mat-label>
+                        <input matInput type="number" [(ngModel)]="animation.centerPoint[2]">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Axis X</mat-label>
+                        <input matInput type="number" [(ngModel)]="animation.axis[0]">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Axis Y</mat-label>
+                        <input matInput type="number" [(ngModel)]="animation.axis[1]">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Axis Z</mat-label>
+                        <input matInput type="number" [(ngModel)]="animation.axis[2]">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Duration</mat-label>
+                        <input matInput type="number" [(ngModel)]="animation.duration">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Offset</mat-label>
+                        <input matInput type="number" [(ngModel)]="animation.offset">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Forwards Delay</mat-label>
+                        <input matInput type="number" [(ngModel)]="animation.forwardsDelay">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Reverse Delay</mat-label>
+                        <input matInput type="number" [(ngModel)]="animation.reverseDelay">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Forwards Start Sound</mat-label>
+                        <mat-select [(ngModel)]="animation.forwardsStartSound">
+                            <mat-option [value]="-1">[none]</mat-option>
+                            <mat-option *ngFor="let asset of getAssets(['sound'])" [value]="asset.id" [matTooltip]="'ID ' + asset.id">{{ asset.name }}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Forwards End Sound</mat-label>
+                        <mat-select [(ngModel)]="animation.forwardsEndSound">
+                            <mat-option [value]="-1">[none]</mat-option>
+                            <mat-option *ngFor="let asset of getAssets(['sound'])" [value]="asset.id" [matTooltip]="'ID ' + asset.id">{{ asset.name }}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Reverse Start Sound</mat-label>
+                        <mat-select [(ngModel)]="animation.reverseStartSound">
+                            <mat-option [value]="-1">[none]</mat-option>
+                            <mat-option *ngFor="let asset of getAssets(['sound'])" [value]="asset.id" [matTooltip]="'ID ' + asset.id">{{ asset.name }}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Reverse End Sound</mat-label>
+                        <mat-select [(ngModel)]="animation.reverseEndSound">
+                            <mat-option [value]="-1">[none]</mat-option>
+                            <mat-option *ngFor="let asset of getAssets(['sound'])" [value]="asset.id" [matTooltip]="'ID ' + asset.id">{{ asset.name }}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </ng-container>
+            </ng-container>
+            <div class="button-group">
+                <mat-checkbox hidden #expanded></mat-checkbox>
+                <button mat-icon-button (click)="expanded.value = !expanded.value">
+                    <mat-icon>{{ expanded.value ? "expand_less" : "expand_more" }}</mat-icon>
+                </button>
+                <button mat-icon-button (click)="moveUp(animation)" [disabled]="!canMoveUp(animation)">
+                    <mat-icon>arrow_upward</mat-icon>
+                </button>
+                <button mat-icon-button (click)="moveDown(animation)" [disabled]="!canMoveDown(animation)">
+                    <mat-icon>arrow_downward</mat-icon>
+                </button>
+                <button mat-icon-button (click)="cloneAnimation(animation)">
+                    <mat-icon>content_copy</mat-icon>
+                </button>
+                <button mat-icon-button (click)="removeAnimation(animation)">
+                    <mat-icon>remove</mat-icon>
+                </button>
+            </div>
+        </div>
+    </mat-card>
+</div>

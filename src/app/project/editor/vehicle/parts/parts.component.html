@@ -1,0 +1,191 @@
+<div class="content">
+    <div>
+        Part Locations: <button mat-icon-button (click)="addPart()">
+            <mat-icon>add</mat-icon>
+        </button>
+    </div>
+    <div class="vertical-list">
+        <mat-card *ngFor="let part of getParts()">
+            <h2 mat-card-title>ID {{ part.id }}</h2>
+            <div mat-card-content>
+                <mat-form-field>
+                    <mat-label>Part Location Name</mat-label>
+                    <input matInput [(ngModel)]="part.name">
+                </mat-form-field>
+                <ng-container *ngIf="expanded.value">
+                    <mat-form-field>
+                        <mat-label>Depends On</mat-label>
+                        <mat-select [(ngModel)]="part.dependsOn">
+                            <mat-option [value]="-1">[none]</mat-option>
+                            <mat-option *ngFor="let dependency of getAvailableDependencies(part)" [value]="dependency.id" [matTooltip]="'ID ' + dependency.id">{{ dependency.name }}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Model Position X</mat-label>
+                        <input matInput type="number" [(ngModel)]="part.position[0]">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Model Position Y</mat-label>
+                        <input matInput type="number" [(ngModel)]="part.position[1]">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Model Position Z</mat-label>
+                        <input matInput type="number" [(ngModel)]="part.position[2]">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Model Rotation X</mat-label>
+                        <input matInput type="number" [(ngModel)]="part.rotation[0]">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Model Rotation Y</mat-label>
+                        <input matInput type="number" [(ngModel)]="part.rotation[1]">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Model Rotation Z</mat-label>
+                        <input matInput type="number" [(ngModel)]="part.rotation[2]">
+                    </mat-form-field>
+                    <div>
+                        <div>
+                            Types: <button mat-icon-button (click)="addType(part)">
+                                <mat-icon>add</mat-icon>
+                            </button>
+                        </div>
+                        <mat-list>
+                            <mat-list-item *ngFor="let type of part.types">
+                                <div mat-line>{{ type.type.charAt(0).toUpperCase() + type.type.slice(1) }}</div>
+                                <div mat-line *ngIf="type.name !== ''">{{ type.name }} <font color="gray">({{ type.type }}_{{ type.name }})</font></div>
+                                <button mat-icon-button (click)="part.types.splice(part.types.indexOf(type), 1)">
+                                    <mat-icon>remove</mat-icon>
+                                </button>
+                            </mat-list-item>
+                        </mat-list>
+                    </div>
+                    <div>
+                        <div>
+                            Custom Types: <button mat-icon-button (click)="addCustomType(part)">
+                                <mat-icon>add</mat-icon>
+                            </button>
+                        </div>
+                        <mat-list>
+                            <mat-list-item *ngFor="let customType of part.customTypes">
+                                <div mat-line>{{ customType.name }}</div>
+                                <button mat-icon-button (click)="part.customTypes.splice(part.customTypes.indexOf(customType), 1)">
+                                    <mat-icon>remove</mat-icon>
+                                </button>
+                            </mat-list-item>
+                        </mat-list>
+                    </div>
+                    <mat-checkbox [(ngModel)]="part.acceptWithoutCustomType" *ngIf="part.customTypes.length >= 1">Accept Parts Without a Compatible Custom Type</mat-checkbox>
+                    <div>
+                        <div>
+                            Animations: <button mat-icon-button>
+                                <mat-icon>add</mat-icon>
+                            </button>
+                        </div>
+                        <div class="vertical-list">
+
+                        </div>
+                        <mat-list></mat-list>
+                    </div>
+                    <div *ngIf="partAcceptsOneOf(part, ['seat'])">
+                        <div>
+                            Seat Effects: <button mat-icon-button>
+                                <mat-icon>add</mat-icon>
+                            </button>
+                        </div>
+                        <div class="vertical-list">
+
+                        </div>
+                        <mat-list></mat-list>
+                    </div>
+                    <div>
+                        <div>
+                            Particle Objects: <button mat-icon-button>
+                                <mat-icon>add</mat-icon>
+                            </button>
+                        </div>
+                        <div class="vertical-list">
+
+                        </div>
+                        <mat-list></mat-list>
+                    </div>
+                    <mat-checkbox [(ngModel)]="part.turnsWithSteer">Turns With Steer</mat-checkbox>
+                    <mat-checkbox [(ngModel)]="part.isController" *ngIf="partAcceptsOneOf(part, ['seat'])">Controller</mat-checkbox>
+                    <mat-checkbox [(ngModel)]="part.inverseMirroring">Inverse Mirroring</mat-checkbox>
+                    <mat-checkbox [(ngModel)]="part.useMinValue">Use Min Value</mat-checkbox>
+                    <mat-form-field *ngIf="part.useMinValue">
+                        <mat-label>Min Value</mat-label>
+                        <input matInput type="number" [(ngModel)]="part.valueRange[0]">
+                    </mat-form-field>
+                    <mat-checkbox [(ngModel)]="part.useMaxValue">Use Max Value</mat-checkbox>
+                    <mat-form-field *ngIf="part.useMaxValue">
+                        <mat-label>Max Value</mat-label>
+                        <input matInput type="number" [(ngModel)]="part.valueRange[1]">
+                    </mat-form-field>
+                    <ng-container *ngIf="partAcceptsOneOf(part, ['seat'])">
+                        <mat-form-field>
+                            <mat-label>Dismount Position Mode</mat-label>
+                            <mat-select [(ngModel)]="part.dismountPositionMode">
+                                <mat-option value="disabled">Disabled</mat-option>
+                                <mat-option value="relative">Relative</mat-option>
+                                <mat-option value="absolute">Absolute</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-form-field *ngIf="part.dismountPositionMode !== 'disabled'">
+                            <mat-label>Dismount Position X</mat-label>
+                            <input matInput type="number" [(ngModel)]="part.dismountPosition[0]">
+                        </mat-form-field>
+                        <mat-form-field *ngIf="part.dismountPositionMode !== 'disabled'">
+                            <mat-label>Dismount Position Y</mat-label>
+                            <input matInput type="number" [(ngModel)]="part.dismountPosition[1]">
+                        </mat-form-field>
+                        <mat-form-field *ngIf="part.dismountPositionMode !== 'disabled'">
+                            <mat-label>Dismount Position Z</mat-label>
+                            <input matInput type="number" [(ngModel)]="part.dismountPosition[2]">
+                        </mat-form-field>
+                    </ng-container>
+                    <mat-checkbox [(ngModel)]="part.useExtraCollisionBoxOffset">Use Extra Collision Box Offset</mat-checkbox>
+                    <mat-form-field *ngIf="part.useExtraCollisionBoxOffset">
+                        <mat-label>Extra Collision Box Offset</mat-label>
+                        <input matInput type="number">
+                    </mat-form-field>
+                    <ng-container *ngIf="partAcceptsOneOf(part, ['ground'])">
+                        <mat-checkbox [(ngModel)]="part.useTreadDroopConstant">Use Tread Droop Constant</mat-checkbox>
+                        <mat-form-field *ngIf="part.useTreadDroopConstant">
+                            <mat-label>Tread Droop Constant</mat-label>
+                            <input matInput type="number">
+                        </mat-form-field>
+                    </ng-container>
+                    <mat-form-field *ngIf="partAcceptsOneOf(part, ['engine'])">
+                        <mat-label>Intake Offset</mat-label>
+                        <input matInput type="number" [(ngModel)]="part.intakeOffset">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Default Part</mat-label>
+                        <input matInput [(ngModel)]="part.defaultPart">
+                    </mat-form-field>
+                    <mat-checkbox *ngIf="part.defaultPart !== ''" [(ngModel)]="part.isPermanent">Permanent</mat-checkbox>
+                    <mat-form-field>
+                        <mat-label>Linked Doors</mat-label>
+                        <mat-select multiple>
+
+                        </mat-select>
+                    </mat-form-field>
+                    <shared-animations [animations]="part.animations" [assets]="getCurrentNode().assets" [parts]="getCurrentNode().parts" [customVariables]="getCurrentNode().rendering.customVariables"></shared-animations>
+                </ng-container>
+                <div class="button-group">
+                    <mat-checkbox hidden #expanded></mat-checkbox>
+                    <button mat-icon-button (click)="expanded.value = !expanded.value">
+                        <mat-icon>{{ expanded.value ? "expand_less" : "expand_more" }}</mat-icon>
+                    </button>
+                    <button mat-icon-button (click)="clonePart(part)">
+                        <mat-icon>content_copy</mat-icon>
+                    </button>
+                    <button mat-icon-button (click)="removePart(part)">
+                        <mat-icon>remove</mat-icon>
+                    </button>
+                </div>
+            </div>
+        </mat-card>
+    </div>
+</div>

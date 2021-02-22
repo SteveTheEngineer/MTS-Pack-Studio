@@ -1,0 +1,18 @@
+<h2 mat-dialog-title>Add Type</h2>
+<div mat-dialog-content>
+    <mat-form-field>
+        <mat-label>Type</mat-label>
+        <mat-select [(ngModel)]="type.type" (selectionChange)="error = ''" [value]="getPartTypes()[0]">
+            <mat-option *ngFor="let type of getPartTypes()" [value]="type">{{ type.charAt(0).toUpperCase() + type.slice(1) }}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Subtype</mat-label>
+        <input matInput [(ngModel)]="type.name" (input)="error = ''">
+    </mat-form-field>
+    <mat-error *ngIf="error !== ''">{{ error }}</mat-error>
+</div>
+<div mat-dialog-actions align="end">
+    <button mat-button (click)="dialogRef.close()">Cancel</button>
+    <button mat-button (click)="add()">Add</button>
+</div>

@@ -1,0 +1,12 @@
+<h1 mat-dialog-title>Add {{ data.text }}</h1>
+<div mat-dialog-content>
+    <mat-form-field>
+        <mat-label>{{ data.text }}</mat-label>
+        <input matInput [(ngModel)]="string">
+    </mat-form-field>
+    <mat-error *ngIf="error !== ''">{{ error }}</mat-error>
+</div>
+<div mat-dialog-actions align="end">
+    <button mat-button [mat-dialog-close]="undefined">Cancel</button>
+    <button mat-button cdkFocusInitial (click)="add()">Add</button>
+</div>

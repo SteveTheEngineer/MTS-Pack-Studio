@@ -1,0 +1,16 @@
+<h1 mat-dialog-title>Create Project</h1>
+<div mat-dialog-content>
+    <mat-form-field>
+        <mat-label>Project Name</mat-label>
+        <input matInput type="text" [(ngModel)]="projectName" (input)="error = ''">
+    </mat-form-field><br>
+    <mat-form-field>
+        <mat-label>Project Path</mat-label>
+        <input matInput type="text" [(ngModel)]="projectPath" [placeholder]="getPath()" (input)="error = ''">
+    </mat-form-field>
+    <mat-error *ngIf="error">{{ error }}</mat-error>
+</div>
+<div mat-dialog-actions align="center">
+    <button mat-button [matDialogClose]="undefined">Cancel</button>
+    <button mat-button (click)="create()">Create</button>
+</div>

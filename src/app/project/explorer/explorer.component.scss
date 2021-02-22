@@ -1,0 +1,31 @@
+.project-explorer {
+    height: 100%;
+    background: rgba(0, 0, 0, 0.1);
+    width: 500px;
+    mat-tree {
+        background: rgba(0, 0, 0, 0);
+    }
+}
+
+.tree-wrapper {
+    flex-basis: 1;
+    overflow: auto;
+    height: calc(100% - 50px);
+}
+
+.non-interactable {
+    user-select: none;
+    pointer-events: none;
+}
+
+.explorer-toolbar {
+    background: rgba(0, 0, 0, 0.05);
+    padding: 0 8px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .toolbar-options mat-checkbox {
+        margin-right: 10px;
+    }
+}

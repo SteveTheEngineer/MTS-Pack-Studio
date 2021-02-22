@@ -1,0 +1,47 @@
+<div class="engine-wrapper">
+    <mat-menu #objectMenu="matMenu">
+        <button mat-menu-item disabled>
+            <span>{{ objectMenuData.object }}</span>
+        </button>
+        <mat-divider></mat-divider>
+        <mat-menu #objectMenuCopyPosition="matMenu">
+            <button mat-menu-item>
+                <span>Center</span>
+            </button>
+            <button mat-menu-item>
+                <span>Max X</span>
+            </button>
+            <button mat-menu-item>
+                <span>Min X</span>
+            </button>
+            <button mat-menu-item>
+                <span>Max Y</span>
+            </button>
+            <button mat-menu-item>
+                <span>Min Y</span>
+            </button>
+            <button mat-menu-item>
+                <span>Max Z</span>
+            </button>
+            <button mat-menu-item>
+                <span>Min Z</span>
+            </button>
+        </mat-menu>
+        <mat-menu #objectMenuInstruments="matMenu">
+            <button mat-menu-item>
+                <span>ID 0</span>
+            </button>
+            <button mat-menu-item>
+                <span>ID 1</span>
+            </button>
+        </mat-menu>
+        <button mat-menu-item [matMenuTriggerFor]="objectMenuCopyPosition">
+            <span>Store Position</span>
+        </button>
+        <button mat-menu-item [matMenuTriggerFor]="objectMenuInstruments">
+            <span>Place Instrument Here</span>
+        </button>
+    </mat-menu>
+    <div #objectMenuTrigger="matMenuTrigger" style="visibility: hidden; position: fixed" [style.left]="objectMenuData.x" [style.top]="objectMenuData.y" [matMenuTriggerFor]="objectMenu"></div>
+    <canvas #renderCanvas id="renderCanvas"></canvas>
+</div>

@@ -1,0 +1,14 @@
+:host {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: stretch;
+    height: 100vh;
+}
+
+.editor {
+    flex-grow: 8;
+}
+.editor::-webkit-scrollbar {
+    display: none;
+}

@@ -1,0 +1,14 @@
+.content {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    width: calc(100% - 20px);
+    mat-checkbox, mat-form-field {
+        margin-bottom: 10px;
+    }
+}
+
+:host ::ng-deep .mat-tab-body-content {
+    overflow-y: auto !important;
+}

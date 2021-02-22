@@ -1,0 +1,22 @@
+<div class="content">
+    <div class="vertical-list">
+        <mat-card *ngFor="let object of getModelObjects()">
+            <h2 mat-card-title [ngClass]="{ghost: isGhost(object)}">{{ object.name }} <span *ngIf="isGhost(object)">&lt;GHOST&gt;</span></h2>
+            <div mat-card-content>
+                <div>
+                    <button mat-button *ngIf="isGhost(object)" (click)="getModelObjects().splice(getModelObjects().indexOf(object), 1)">Delete</button>
+                </div>
+                <mat-form-field>
+                    <mat-label>Apply Animation After</mat-label>
+                    <mat-select [(ngModel)]="object.applyAfter">
+                        <mat-option value="''">[none]</mat-option>
+                        <mat-option *ngFor="let modelObject of getAvailableDependencies(object)" [value]="modelObject.name">{{ modelObject.name }}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <div>
+                    <shared-animations [animations]="object.animations" [assets]="getCurrentNode().assets" [parts]="getCurrentNode().parts" [customVariables]="getCurrentNode().rendering.customVariables"></shared-animations>
+                </div>
+            </div>
+        </mat-card>    
+    </div>
+</div>

@@ -1,0 +1,24 @@
+<h2 mat-dialog-title>Position instrument in HUD</h2>
+<div mat-dialog-content>
+    <canvas #canvas style="image-rendering: pixelated;" width="600" height="210"></canvas>
+    <div>
+        <mat-form-field>
+            <mat-label>X</mat-label>
+            <input type="number" matInput [(ngModel)]="position[0]" step="1">
+        </mat-form-field><br>
+        <mat-form-field>
+            <mat-label>Y</mat-label>
+            <input type="number" matInput [(ngModel)]="position[1]" step="1">
+        </mat-form-field><br>
+        <mat-form-field>
+            <mat-label>Scale</mat-label>
+            <input type="number" matInput [(ngModel)]="scale" step="0.01">
+        </mat-form-field><br>
+        <mat-checkbox [(ngModel)]="snap">Axis Snap</mat-checkbox><br>
+        <mat-checkbox [(ngModel)]="lockX">Lock X</mat-checkbox><br>
+        <mat-checkbox [(ngModel)]="lockY">Lock Y</mat-checkbox>
+    </div>
+</div>
+<div mat-dialog-actions align="end">
+    <button mat-button (click)="save()">Save</button>
+</div>

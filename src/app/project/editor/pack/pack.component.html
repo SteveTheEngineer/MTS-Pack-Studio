@@ -1,0 +1,17 @@
+<div class="pack-editor-wrapper">
+    <mat-tab-group>
+        <mat-tab label="General">
+            <div class="content">
+                <mat-form-field>
+                    <mat-label>Pack Name</mat-label>
+                    <input matInput [(ngModel)]="getCurrentNode().name">
+                </mat-form-field>
+    
+                <mat-form-field>
+                    <mat-label>Pack ID</mat-label>
+                    <input matInput [(ngModel)]="getCurrentNode().id" [placeholder]="getCurrentNode().getId()">
+                </mat-form-field>
+            </div>
+        </mat-tab>
+    </mat-tab-group>
+</div>

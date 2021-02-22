@@ -1,0 +1,149 @@
+<div class="project-explorer">
+    <div class="explorer-toolbar">
+        <div class="toolbar-options">
+            <mat-checkbox [(ngModel)]="multiSelection">Multi-selection</mat-checkbox>
+            <mat-checkbox [(ngModel)]="recursiveSelection" [disabled]="!multiSelection">Recursive Selection</mat-checkbox>
+        </div>
+        <div class="toolbar-actions">
+            <mat-menu #rootNewMenu="matMenu">
+                <button mat-menu-item (click)="newRootNode('pack')">
+                    <mat-icon>reorder</mat-icon>
+                    <span>Pack</span>
+                </button>
+            </mat-menu>
+            <mat-menu #moreMenu="matMenu">
+                <button mat-menu-item disabled>
+                    <span>{{ getProjectName() }}</span>
+                </button>
+                <mat-divider></mat-divider>
+                <button mat-menu-item [matMenuTriggerFor]="rootNewMenu">
+                    <mat-icon>add</mat-icon>
+                    <span>New</span>
+                </button>
+                <button mat-menu-item [disabled]="selection.selected.length <= 0" (click)="bulkDelete()">
+                    <mat-icon>delete</mat-icon>
+                    <span>Bulk Delete</span>
+                </button>
+                <button mat-menu-item [disabled]="selection.selected.length <= 0" (click)="bulkDuplicate()">
+                    <mat-icon>content_copy</mat-icon>
+                    <span>Bulk Duplicate</span>
+                </button>
+                <mat-divider></mat-divider>
+                <button mat-menu-item (click)="renameProject()">
+                    <mat-icon>title</mat-icon>
+                    <span>Rename Project</span>
+                </button>
+                <button mat-menu-item>
+                    <mat-icon>open_in_new</mat-icon>
+                    <span>Export Project</span>
+                </button>
+                <button mat-menu-item (click)="saveProject()">
+                    <mat-icon>save</mat-icon>
+                    <span>Save Project</span>
+                </button>
+                <a mat-menu-item (click)="closeProject()">
+                    <mat-icon>clear</mat-icon>
+                    <span>Close Project</span>
+                </a>
+            </mat-menu>
+            <button mat-icon-button [matMenuTriggerFor]="rootNewMenu">
+                <mat-icon>add</mat-icon>
+            </button>
+            <button mat-icon-button [matMenuTriggerFor]="moreMenu">
+                <mat-icon>more_vert</mat-icon>
+            </button>
+        </div>
+    </div>
+    <mat-menu #nodeMenu="matMenu">
+        <ng-container *ngIf="selectedNode !== undefined && (selectedNode.node.type === 'folder' || selectedNode.node.type === 'pack')">
+            <button mat-menu-item (click)="treeControl.expandDescendants(selectedNode)">
+                <mat-icon>unfold_more</mat-icon>
+                <span>Expand All</span>
+            </button>
+            <button mat-menu-item (click)="treeControl.collapseDescendants(selectedNode)">
+                <mat-icon>unfold_less</mat-icon>
+                <span>Collapse All</span>
+            </button>
+            <mat-divider></mat-divider>
+        </ng-container>
+        <button mat-menu-item [matMenuTriggerFor]="newMenu" *ngIf="selectedNode !== undefined && (selectedNode.node.type === 'folder' || selectedNode.node.type === 'pack')">
+            <mat-icon>add</mat-icon>
+            <span>New</span>
+        </button>
+        <button mat-menu-item (click)="moveToCurrent()" *ngIf="selectedNode !== undefined && selectedNode.node.type !== 'pack'" [disabled]="!canMoveToCurrent()">
+            <mat-icon>arrow_right_alt</mat-icon>
+            <span>Move to Selected</span>
+        </button>
+        <button mat-menu-item (click)="duplicate()">
+            <mat-icon>content_copy</mat-icon>
+            <span>Duplicate</span>
+        </button>
+        <button mat-menu-item (click)="rename()">
+            <mat-icon>title</mat-icon>
+            <span>Rename</span>
+        </button>
+        <button mat-menu-item (click)="deleteNode()">
+            <mat-icon>delete</mat-icon>
+            <span>Delete</span>
+        </button>
+    </mat-menu>
+    <mat-menu #newMenu="matMenu">
+        <button mat-menu-item (click)="newNode('folder')">
+            <mat-icon>folder</mat-icon>
+            <span>Folder</span>
+        </button>
+        <button mat-menu-item (click)="newNode('vehicle')">
+            <mat-icon>local_shipping</mat-icon>
+            <span>Vehicle</span>
+        </button>
+        <button mat-menu-item (click)="newNode('part')">
+            <mat-icon>select_all</mat-icon>
+            <span>Part</span>
+        </button>
+        <button mat-menu-item (click)="newNode('instrument')">
+            <mat-icon>speed</mat-icon>
+            <span>Instrument</span>
+        </button>
+        <button mat-menu-item (click)="newNode('decor')">
+            <mat-icon>grass</mat-icon>
+            <span>Decor</span>
+        </button>
+        <button mat-menu-item (click)="newNode('booklet')">
+            <mat-icon>import_contacts</mat-icon>
+            <span>Booklet</span>
+        </button>
+        <button mat-menu-item (click)="newNode('skin')">
+            <mat-icon>brush</mat-icon>
+            <span>Skin</span>
+        </button>
+    </mat-menu>
+    <div #nodeMenuTrigger="matMenuTrigger" style="visibility: hidden; position: fixed;" [style.left]="nodeMenuPosition.x" [style.top]="nodeMenuPosition.y" [matMenuTriggerFor]="nodeMenu"></div>
+    <div class="tree-wrapper">
+        <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+            <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle matTreeNodePadding>
+                <button mat-icon-button disabled></button>
+                <mat-checkbox [checked]="selection.isSelected(node)" (change)="select(node)" (contextmenu)="nodeContextMenu($event, node)">
+                    <button tabindex="-1" mat-icon-button class="non-interactable">
+                        <mat-icon>{{ this.getIcon(node.node.type) }}</mat-icon>
+                    </button>
+                    {{ node.node.name }} <font color="gray">({{ node.node.getId() }})</font>
+                </mat-checkbox>
+            </mat-tree-node>
+        
+            <mat-tree-node *matTreeNodeDef="let node; when: isExpandable" matTreeNodePadding>
+                <button mat-icon-button matTreeNodeToggle>
+                    <mat-icon class="mat-icon-rtl-mirror">
+                        {{ treeControl.isExpanded(node) ? "expand_more" : "chevron_right" }}
+                    </mat-icon>
+                </button>
+                <mat-checkbox [checked]="selection.isSelected(node)" (change)="select(node)" (contextmenu)="nodeContextMenu($event, node)">
+                    <button tabindex="-1" mat-icon-button class="non-interactable">
+                        <mat-icon>{{ this.getIcon(node.node.type) }}</mat-icon>
+                    </button>
+                    {{ node.node.name }} <font color="gray" *ngIf="node.node.type === 'pack'">({{ node.node.getId() }})</font>
+                </mat-checkbox>
+                <button mat-icon-button (click)="selectedNode = node" [matMenuTriggerFor]="newMenu"><mat-icon>add</mat-icon></button>
+            </mat-tree-node>
+        </mat-tree>
+    </div>
+</div>

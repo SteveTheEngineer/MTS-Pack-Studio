@@ -1,0 +1,10 @@
+<project-explorer></project-explorer>
+<div class="editor">
+    <ng-container *ngIf="showEditor()">
+        <ng-container [ngSwitch]="getCurrentNode().type">
+            <pack-editor *ngSwitchCase="'pack'"></pack-editor>
+            <folder-editor *ngSwitchCase="'folder'"></folder-editor>
+            <vehicle-editor *ngSwitchCase="'vehicle'"></vehicle-editor>
+        </ng-container>
+    </ng-container>
+</div>

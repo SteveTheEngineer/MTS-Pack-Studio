@@ -1,0 +1,22 @@
+<div class="vehicle-editor-wrapper">
+    <mat-tab-group (selectedTabChange)="onTabChange()">
+        <mat-tab label="General">
+            <vehicle-general></vehicle-general>
+        </mat-tab>
+        <mat-tab label="Instruments">
+            <vehicle-instruments></vehicle-instruments>
+        </mat-tab>
+        <mat-tab label="Part Locations">
+            <vehicle-parts></vehicle-parts>
+        </mat-tab>
+        <mat-tab label="Model Objects">
+            <vehicle-modelobjects></vehicle-modelobjects>
+        </mat-tab>
+        <mat-tab label="3D Viewport">
+            <div class="content-viewport">
+                <app-viewport></app-viewport>
+                <button class="preview-animation" mat-flat-button>Preview Animation</button>
+            </div>
+        </mat-tab>
+    </mat-tab-group>
+</div>

@@ -1,0 +1,277 @@
+<div class="content">
+    <h2>Export Settings</h2>
+    <mat-form-field>
+        <mat-label>Vehicle Name</mat-label>
+        <input matInput [(ngModel)]="getCurrentNode().name">
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Vehicle ID</mat-label>
+        <input matInput [placeholder]="getCurrentNode().getId()" [(ngModel)]="getCurrentNode().id">
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Vehicle Model</mat-label>
+        <mat-select [(ngModel)]="getCurrentNode().modelAsset">
+            <mat-option [value]="-1">[none]</mat-option>
+            <mat-option *ngFor="let asset of getAssets(['model'])" [value]="asset.id" [matTooltip]="'ID ' + asset.id">{{ asset.name }}</mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <div>
+        Vehicle Assets: <button mat-icon-button (click)="addAsset()">
+            <mat-icon>add</mat-icon>
+        </button>
+        <mat-list>
+            <mat-list-item *ngFor="let asset of getCurrentNode().assets">
+                <mat-icon mat-list-icon>
+                    texture
+                </mat-icon>
+                <div mat-line>
+                    {{ asset.name }}
+                </div>
+                <div mat-line>
+                    SHA256: {{ asset.hash }}. ID: {{ asset.id }}
+                </div>
+                <button mat-icon-button matTooltip="Replace the file" (click)="replaceAsset(asset)">
+                    <mat-icon>insert_drive_file</mat-icon>
+                </button>
+                <button mat-icon-button matTooltip="Rename the asset" (click)="renameAsset(asset)">
+                    <mat-icon>title</mat-icon>
+                </button>
+                <button mat-icon-button matTooltip="Remove the asset" (click)="removeAsset(asset)">
+                    <mat-icon>remove</mat-icon>
+                </button>
+            </mat-list-item>
+        </mat-list>
+    </div>
+    <div>
+        Ingredient Sets: <button mat-icon-button (click)="addIngredientSet()">
+            <mat-icon>add</mat-icon>
+        </button>
+        <mat-list></mat-list>
+    </div>
+    <div class="vertical-list">
+        <mat-card *ngFor="let set of getIngredientSets()">
+            <h2 mat-card-title>ID {{ set.id }}</h2>
+            <div mat-card-content>
+                <mat-form-field>
+                    <mat-label>Set Name</mat-label>
+                    <input matInput [(ngModel)]="set.name">
+                </mat-form-field>
+                <ng-container *ngIf="expanded.value">
+                    <div>
+                        Set Ingredients: <button mat-icon-button (click)="addIngredient(set)">
+                            <mat-icon>add</mat-icon>
+                        </button>
+                    </div>
+                    <mat-card *ngFor="let ingredient of set.ingredients">
+                        <div mat-card-content>
+                            <mat-form-field>
+                                <mat-label>Item ID</mat-label>
+                                <input matInput [(ngModel)]="ingredient.itemId">
+                            </mat-form-field>
+                            <mat-form-field>
+                                <mat-label>Item Meta</mat-label>
+                                <input type="number" matInput [(ngModel)]="ingredient.meta">
+                            </mat-form-field>
+                            <mat-form-field>
+                                <mat-label>Item Amount</mat-label>
+                                <input type="number" matInput [(ngModel)]="ingredient.amount">
+                            </mat-form-field>
+                            <button mat-icon-button (click)="set.ingredients.splice(set.ingredients.indexOf(ingredient), 1)">
+                                <mat-icon>remove</mat-icon>
+                            </button>
+                        </div>
+                    </mat-card>
+                </ng-container>
+                <div class="button-group">
+                    <mat-checkbox hidden #expanded></mat-checkbox>
+                    <button mat-icon-button (click)="expanded.value = !expanded.value">
+                        <mat-icon>{{ expanded.value ? "expand_less" : "expand_more" }}</mat-icon>
+                    </button>
+                    <button mat-icon-button (click)="removeIngredientSet(set)">
+                        <mat-icon>remove</mat-icon>
+                    </button>
+                </div>
+            </div>
+        </mat-card>
+    </div>
+    <div>Definitions: <button mat-icon-button (click)="addDefinition()"><mat-icon>add</mat-icon></button></div>
+    <div class="vertical-list">
+        <mat-card *ngFor="let definition of getDefinitions()">
+            <div mat-card-content>
+                <mat-form-field>
+                    <mat-label>Definition Name</mat-label>
+                    <input matInput [placeholder]="getCurrentNode().name" [(ngModel)]="definition.name">
+                </mat-form-field>
+                <ng-container *ngIf="expanded.value">
+                    <mat-form-field>
+                        <mat-label>Second Tone</mat-label>
+                        <input matInput [(ngModel)]="definition.secondTone">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Second Color</mat-label>
+                        <input type="color" matInput [(ngModel)]="definition.secondColor">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Description</mat-label>
+                        <input matInput [(ngModel)]="definition.description">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Extra Materials</mat-label>
+                        <mat-select [(ngModel)]="definition.extraMaterials">
+                            <mat-option [value]="-1">[none]</mat-option>
+                            <mat-option *ngFor="let set of getIngredientSets()" [value]="set.id" [matTooltip]="'ID ' + set.id">{{ set.name }}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Vehicle Texture</mat-label>
+                        <mat-select [(ngModel)]="definition.textureAsset">
+                            <mat-option [value]="-1">[none]</mat-option>
+                            <mat-option *ngFor="let asset of getAssets(['texture'])" [value]="asset.id" [matTooltip]="'ID ' + asset.id">{{ asset.name }}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </ng-container>
+                <div class="button-group">
+                    <mat-checkbox hidden #expanded></mat-checkbox>
+                    <button mat-icon-button (click)="expanded.value = !expanded.value">
+                        <mat-icon>{{ expanded.value ? "expand_less" : "expand_more" }}</mat-icon>
+                    </button>
+                    <button mat-icon-button [disabled]="getDefinitions().length <= 1" (click)="removeDefinition(definition)">
+                        <mat-icon>
+                            remove
+                        </mat-icon>
+                    </button>
+                </div>
+            </div>
+        </mat-card>
+    </div>
+
+    <h2>General Settings</h2>
+    <mat-checkbox [(ngModel)]="getCurrentNode().general.isAircraft">Aircraft</mat-checkbox>
+    <mat-checkbox [(ngModel)]="getCurrentNode().general.isBlimp">Blimp</mat-checkbox>
+    <mat-checkbox [(ngModel)]="getCurrentNode().general.openTop">Open Top</mat-checkbox>
+    <mat-form-field>
+        <mat-label>Empty Mass (kg)</mat-label>
+        <input type="number" value="0" matInput [(ngModel)]="getCurrentNode().general.emptyMass">
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Crafting Materials</mat-label>
+        <mat-select [(ngModel)]="getCurrentNode().general.materials">
+            <mat-option [value]="-1">[none]</mat-option>
+            <mat-option *ngFor="let set of getIngredientSets()" [value]="set.id" [matTooltip]="'ID ' + set.id">{{ set.name }}</mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <h2>Motorized Settings</h2>
+    <mat-checkbox [disabled]="getCurrentNode().general.isAircraft">Big Truck</mat-checkbox>
+    <mat-checkbox [disabled]="getCurrentNode().general.isAircraft">Trailer</mat-checkbox>
+    <mat-form-field>
+        <mat-label>Drive</mat-label>
+        <mat-select [disabled]="getCurrentNode().general.isAircraft" [(ngModel)]="getCurrentNode().motorized.drive">
+            <mat-option value="none">No Drive</mat-option>
+            <mat-option value="rear">Rear Wheel Drive</mat-option>
+            <mat-option value="front">Front Wheel Drive</mat-option>
+            <mat-option value="full">Full Drive</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-checkbox [(ngModel)]="getCurrentNode().motorized.hasCruiseControl">Cruise Control</mat-checkbox>
+    <mat-checkbox [(ngModel)]="getCurrentNode().motorized.hasAutopilot">Autopilot</mat-checkbox>
+    <mat-checkbox [disabled]="!getCurrentNode().general.isAircraft">Flaps</mat-checkbox>
+    <mat-form-field>
+        <mat-label>Fuel Capacity (mB)</mat-label>
+        <input type="number" value="0" matInput [(ngModel)]="getCurrentNode().motorized.fuelCapacity">
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Default Fuel Amount (mB)</mat-label>
+        <input type="number" value="0" matInput [(ngModel)]="getCurrentNode().motorized.defaultFuelQty">
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Down Force</mat-label>
+        <input type="number" value="1" matInput [(ngModel)]="getCurrentNode().motorized.downForce">
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Axle Ratio</mat-label>
+        <input type="number" value="1" matInput [(ngModel)]="getCurrentNode().motorized.axleRatio">
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Drag Coefficient</mat-label>
+        <input type="number" value="0" matInput [(ngModel)]="getCurrentNode().motorized.dragCoefficient">
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Ballast Volume</mat-label>
+        <input type="number" value="0" matInput [disabled]="!getCurrentNode().general.isAircraft" [(ngModel)]="getCurrentNode().motorized.ballastVolume">
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Horn Sound</mat-label>
+        <mat-select [(ngModel)]="getCurrentNode().motorized.hornSound">
+            <mat-option [value]="-1">[none]</mat-option>
+            <mat-option *ngFor="let asset of getAssets(['sound'])" [value]="asset.id" [matTooltip]="'ID ' + asset.id">{{ asset.name }}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Siren Sound</mat-label>
+        <mat-select [(ngModel)]="getCurrentNode().motorized.sirenSound">
+            <mat-option [value]="-1">[none]</mat-option>
+            <mat-option *ngFor="let asset of getAssets(['sound'])" [value]="asset.id" [matTooltip]="'ID ' + asset.id">{{ asset.name }}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <div>Hitch Types: <button mat-icon-button (click)="addHitchType()"><mat-icon>add</mat-icon></button></div>
+    <mat-list>
+        <mat-list-item *ngFor="let hitchType of getCurrentNode().motorized.hitchTypes">
+            <div mat-line>{{ hitchType }}</div>
+            <button mat-icon-button (click)="getCurrentNode().motorized.hitchTypes.splice(getCurrentNode().motorized.hitchTypes.indexOf(hitchType), 1)">
+                <mat-icon>remove</mat-icon>
+            </button>
+        </mat-list-item>
+    </mat-list>
+    <mat-form-field>
+        <mat-label>Hookup Type</mat-label>
+        <input matInput>
+    </mat-form-field>
+
+    <h2>Rendering Settings</h2>
+    <mat-form-field>
+        <mat-label>HUD Texture</mat-label>
+        <mat-select>
+            <mat-option [value]="-1">[none]</mat-option>
+            <mat-option *ngFor="let asset of getAssets(['texture'])" [value]="asset.id" [matTooltip]="'ID ' + asset.id">{{ asset.name }}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>HUD Lit Texture</mat-label>
+        <mat-select>
+            <mat-option [value]="-1">[none]</mat-option>
+            <mat-option *ngFor="let asset of getAssets(['texture'])" [value]="asset.id" [matTooltip]="'ID ' + asset.id">{{ asset.name }}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Panel Texture</mat-label>
+        <mat-select>
+            <mat-option [value]="-1">[none]</mat-option>
+            <mat-option *ngFor="let asset of getAssets(['texture'])" [value]="asset.id" [matTooltip]="'ID ' + asset.id">{{ asset.name }}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Panel Text Color</mat-label>
+        <input matInput type="color">
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Panel Lit Text Color</mat-label>
+        <input matInput type="color">
+    </mat-form-field>
+    <div>
+        Custom Variables: <button mat-icon-button (click)="addCustomVariable()">
+            <mat-icon>add</mat-icon>
+        </button>
+    </div>
+    <mat-list>
+        <mat-list-item *ngFor="let customVariable of getCurrentNode().rendering.customVariables">
+            <div mat-line>{{ customVariable }}</div>
+            <button mat-icon-button (click)="getCurrentNode().rendering.customVariables.splice(getCurrentNode().rendering.customVariables.indexOf(customVariable), 1)">
+                <mat-icon>remove</mat-icon>
+            </button>
+        </mat-list-item>
+    </mat-list>
+</div>

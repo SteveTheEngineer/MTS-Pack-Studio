@@ -1,0 +1,19 @@
+<mat-card class="recent-projects">
+    <mat-card-title>Recent Projects</mat-card-title>
+    <mat-action-list>
+        <button mat-list-item *ngFor="let project of getRecentProjects()" (click)="openRecent(project)" matTooltip="Open the recent project">
+            <div mat-line>{{ project.name }}</div>
+            <div mat-line>{{ project.path }}</div>
+            <div mat-line>Last open: {{ getLastOpenTime(project) }}</div>
+            <button mat-icon-button (click)="removeRecentProject(project)" matTooltip="Remove from recent projects">
+                <mat-icon>close</mat-icon>
+            </button>
+        </button>
+    </mat-action-list>
+</mat-card>
+<div class="actions">
+    <h1>MTS Pack Studio</h1>
+    <button mat-flat-button class="new-project" (click)="newProject()" matTooltip="Create a new MTS Pack Studio Project">New Project</button>
+    <button mat-flat-button class="open-project" (click)="openProject()" matTooltip="Choose the project directory and open the project in the MTS Pack Studio">Open an Existing Project</button>
+    <button mat-flat-button class="import-pack" disabled matTooltip="Import an already exported MTS pack and convert it into a MTS Pack Studio project">Import a MTS Pack</button>
+</div>
