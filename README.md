@@ -1,3 +1,6 @@
+# Archived
+I am no longer working on this, though I've got some plans on a similar project in the future. Stay tuned!
+
 # MtsPackStudio
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 10.2.0.
